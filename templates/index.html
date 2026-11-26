@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5f1e8">
+  <title>WASCHED — Adaptive CPU Scheduling Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="WASCHED home">
+      <span class="brand-mark"><span>W</span></span>
+      <span class="brand-copy"><b>WASCHED</b><small>OPERATING SYSTEMS LAB</small></span>
+    </a>
+    <nav class="top-nav" aria-label="Main navigation">
+      <a href="#top">Overview</a><a href="#comparison">Algorithms</a><a href="#timeline">Execution timeline</a>
+    </nav>
+    <div class="header-status"><span class="status-dot"></span> Simulation environment <span class="status-divider">/</span> v1.0</div>
+    <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Toggle navigation">☰</button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <div class="eyebrow"><span></span> A WORKLOAD-AWARE SCHEDULING LAB <span></span></div>
+        <h1>Make every cycle<br><em>count.</em></h1>
+        <p>Explore how operating systems allocate CPU time. Compare classic scheduling strategies with an adaptive, machine-learning recommendation — all against the same workload.</p>
+        <div class="hero-actions"><a class="hero-cta" href="#workspace">Configure an experiment <span>↗</span></a><span class="hero-note">REPEATABLE · EXPLAINABLE · INTERACTIVE</span></div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+        <div class="chip-illustration"><div class="chip-top"><span>W</span><small>CPU CORE</small></div><div class="chip-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="chip-caption">SCHEDULER <b>ACTIVE</b></div></div>
+        <div class="float-card fc-one"><small>POLICY SET</small><b>06</b><span>algorithms</span></div>
+        <div class="float-card fc-two"><span class="pulse"></span><b>ML adaptive</b><small>recommendation ready</small></div>
+        <div class="float-card fc-three"><small>ROUND ROBIN</small><b>q = 4</b></div>
+      </div>
+      <div class="hero-bottom"><span>01 — EXPERIMENT WORKSPACE</span><span>DESIGNED FOR SYSTEMS THINKING <b>↓</b></span></div>
+    </section>
+
+    <section class="intro-strip">
+      <div><span class="section-kicker">THE WORKFLOW</span><h2>From workload to <em>insight.</em></h2></div>
+      <p>Define the process mix. Run six policies. Inspect the metrics, recommendation, and execution order — without changing your operating system.</p>
+    </section>
+
+    <section class="workspace" id="workspace">
+      <div class="section-heading"><div><span class="section-kicker">EXPERIMENT CONTROLS</span><h2>Set the conditions.</h2></div><span class="step-label">01 / INPUT</span></div>
+      <div class="layout">
+        <div class="panel controls reveal">
+          <div class="panel-heading"><h3><span class="number">01</span> Configure workload</h3><span class="tiny-tag">INPUT</span></div>
+          <label for="workload">Workload input mode</label>
+          <select id="workload"><option value="mixed">Generate · Mixed workload</option><option value="short_dominant">Generate · Short-job dominant</option><option value="long_dominant">Generate · Long-job dominant</option><option value="highly_variable">Generate · Highly variable</option><option value="uniform">Generate · Uniform bursts</option><option value="custom">Enter my own processes</option></select>
+          <div id="generatedOptions">
+            <label for="arrival">Arrival pattern</label><select id="arrival"><option value="batch">Batch — all at time 0</option><option value="poisson">Staggered arrivals</option><option value="bursty">Bursty arrivals</option></select>
+            <div class="split-input"><div><label for="count">Process count</label><input id="count" type="number" min="5" max="100" value="20"></div><div><label for="seed">Random seed</label><input id="seed" type="number" value="42"></div></div>
+          </div>
+          <div id="customOptions" hidden><label for="customProcesses">Your process list (one process per line)</label><p class="helper">CSV format: PID, Arrival, Burst, Priority. Header is optional; priority defaults to 3. Arrival ≥ 0, burst ≥ 1, priority 1–5 (1 is highest).</p><textarea id="customProcesses" rows="7" spellcheck="false">PID,Arrival,Burst,Priority
+P1,0,7,2
+P2,2,4,1
+P3,3,9,3
+P4,5,5,2</textarea><button id="loadExampleBtn" class="secondary" type="button">↺ &nbsp; Restore example workload</button></div>
+          <div class="quantum-row"><label for="quantum">Round Robin quantum</label><span class="quantum-value" id="qval">4</span></div><input id="quantum" type="range" min="1" max="10" value="4">
+          <button id="runBtn" class="primary">Run experiment <span class="arrow">↗</span></button>
+          <p class="helper"><span class="helper-mark">i</span> The same process list is passed to every algorithm for a fair comparison.</p>
+        </div>
+
+        <div class="panel overview reveal">
+          <div class="panel-heading"><h3><span class="number">02</span> Workload analysis</h3><span class="live"><i></i> READY</span></div>
+          <div class="feature-grid" id="features"><div class="feature"><small>Process count</small><b>—</b><span>Jobs in queue</span></div><div class="feature"><small>Mean burst</small><b>—</b><span>Time units</span></div><div class="feature"><small>Burst variability</small><b>—</b><span>Coefficient of variation</span></div><div class="feature"><small>Short jobs</small><b>—</b><span>Fraction of bursts ≤ 5</span></div></div>
+          <div class="ml-callout"><div class="ml-icon">✳</div><div><small>ML POLICY RECOMMENDATION</small><h4 id="mlChoice">Run an experiment to get a recommendation</h4><p id="mlDetail">A small decision tree examines workload features.</p></div><span class="confidence" id="confidence">—</span></div>
+          <div class="analysis-foot"><span class="analysis-symbol">↗</span><p>Recommendation confidence is a model estimate, not proof that a policy is globally optimal.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics-section">
+      <div class="section-heading compact"><div><span class="section-kicker">LIVE SUMMARY</span><h2>Performance at a glance.</h2></div><span class="step-label">02 / RESULTS</span></div>
+      <div class="metric-grid" id="metricCards"><div class="metric-card"><span>BEST AVG WAIT</span><b>—</b><small>Lower is better</small></div><div class="metric-card"><span>BEST RESPONSE</span><b>—</b><small>Lower is better</small></div><div class="metric-card"><span>TOP FAIRNESS</span><b>—</b><small>Closer to 1</small></div><div class="metric-card"><span>HIGHEST THROUGHPUT</span><b>—</b><small>Processes per time unit</small></div></div>
+    </section>
+
+    <section class="panel results-panel reveal" id="comparison">
+      <div class="panel-heading"><div><span class="section-kicker">POLICY BENCHMARK</span><h2><span class="number">03</span> Algorithm comparison</h2></div><span class="tiny-tag">6 POLICIES</span></div>
+      <div class="table-wrap"><table><thead><tr><th>ALGORITHM</th><th>AVG. WAITING ↓</th><th>TURNAROUND</th><th>RESPONSE ↓</th><th>CONTEXT SWITCHES</th><th>THROUGHPUT ↑</th><th>FAIRNESS ↑</th></tr></thead><tbody id="resultsBody"><tr><td colspan="7" class="empty">Run an experiment to populate this table.</td></tr></tbody></table></div>
+      <div class="chart-grid"><div class="chart-card"><div class="chart-title"><span>01</span><h4>Waiting vs response time</h4></div><canvas id="barChart"></canvas></div><div class="chart-card"><div class="chart-title"><span>02</span><h4>Fairness by algorithm</h4></div><canvas id="fairChart"></canvas></div></div>
+    </section>
+
+    <section class="panel timeline-panel reveal" id="timeline">
+      <div class="panel-heading"><div><span class="section-kicker">CPU EXECUTION</span><h2><span class="number">04</span> Execution timeline</h2></div><select id="timelineSelect" class="small-select"><option>ML-ADAPTIVE</option><option>FCFS</option><option>SJF</option><option>SRTF</option><option>RR</option><option>Priority</option></select></div>
+      <div id="gantt" class="gantt"><div class="empty">The timeline appears after the first run.</div></div>
+    </section>
+
+    <footer><a class="footer-brand" href="#top">WASCHED<span>®</span></a><span>CPU SCHEDULING SIMULATOR · EDUCATIONAL PROTOTYPE</span><a href="#top">BACK TO TOP ↑</a></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/static/app.js"></script>
+  <script>
+    const menuButton=document.getElementById('mobileMenu');
+    menuButton?.addEventListener('click',()=>document.querySelector('.top-nav')?.classList.toggle('nav-open'));
+    const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('revealed');revealObserver.unobserve(entry.target)}}),{threshold:.08});
+    document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+  </script>
+</body>
+</html>
